@@ -8,14 +8,15 @@ import lejos.hardware.Button;
 	import lejos.hardware.port.Port;
 	import lejos.hardware.sensor.SensorModes;
 	import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.robotics.SampleProvider;
+	import lejos.hardware.sensor.EV3UltrasonicSensor;
+	import lejos.robotics.SampleProvider;
 	import lejos.utility.Delay;
 
-public double points[][] = {{0.0,2.0},{1.0,1.0},{2.0,2.0},{2.0,1.0},{1.0,0.0}};
-public double Start[] = {0.0,0.0};
 	
 public class NavigationLab {
+	
+	public double points[][] = {{0.0,2.0},{1.0,1.0},{2.0,2.0},{2.0,1.0},{1.0,0.0}};
+	public double Start[] = {0.0,0.0};
 
 	  private static final EV3LargeRegulatedMotor leftMotor =
 	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
