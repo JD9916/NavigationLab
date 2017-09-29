@@ -2,7 +2,6 @@
 
 import lejos.robotics.SampleProvider;
 
-
 /**
  * Control of the wall follower is applied periodically by the UltrasonicPoller thread. The while
  * loop at the bottom executes in a loop. Assuming that the us.fetchSample, and cont.processUSData
@@ -10,14 +9,14 @@ import lejos.robotics.SampleProvider;
  * one cycle through the loop is approximately 70 mS. This corresponds to a sampling rate of 1/70mS
  * or about 14 Hz.
  */
-public class ColorSensorPoller extends Thread {
-  private SampleProvider cs;
-  private float[] csData;
-  public int color;
-  
-  public ColorSensorPoller(SampleProvider cs, float[] csData) {
-    this.cs = cs;
-    this.csData = csData;
+public class UltrasonicPoller extends Thread {
+  private SampleProvider us;
+  private float[] usData;
+  private int distance;
+
+  public UltrasonicPoller(SampleProvider us, float[] usData) {
+    this.us = us;
+    this.usData = usData;
   }
 
   /*
@@ -27,18 +26,9 @@ public class ColorSensorPoller extends Thread {
    * @see java.lang.Thread#run()
    */
   public void run() {
-    
     while (true) {
-      cs.fetchSample(csData, 0); // acquire data
-      
-      //System.out.println("Color Level: " + csData[0]);
-      
-      
-      color = (int)(100*csData[0]); // extract from buffer, cast to int
-
-      //cont.processUSData(distance); // now take action depending on value
-      
-      
+      us.fetchSample(usData, 0); // acquire data
+      distance = (int) (usData[0] * 100.0); // extract from buffer, cast to int
       try {
         Thread.sleep(50);
       } catch (Exception e) {
@@ -46,9 +36,8 @@ public class ColorSensorPoller extends Thread {
     }
   }
   
-  
-  public int getColor(){
-	  return this.color;
+  public int getDistance(){
+	  return this.distance;
   }
 
 }
