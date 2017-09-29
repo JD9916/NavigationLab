@@ -32,6 +32,8 @@ public class NavigationLab {
 	  
 	  public static void main(String[] args) {
 		  
+		  int buttonChoice = 0;
+		  
 		  @SuppressWarnings("resource")
 		  EV3ColorSensor csSensor = new EV3ColorSensor(csPort);
 		  SampleProvider csColor = csSensor.getMode("Red");
@@ -39,6 +41,10 @@ public class NavigationLab {
 		  
 		  ColorSensorPoller csPoller = new ColorSensorPoller(csColor,csData);
 		  csPoller.start();
+		  
+		  final TextLCD t = LocalEV3.get().getTextLCD();
+		  Odometer odometer = new Odometer(leftMotor, rightMotor);
+		  OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 		  
 		  
 		  @SuppressWarnings("resource")
@@ -55,7 +61,31 @@ public class NavigationLab {
 		          //Navigation.drive(leftMotor, rightMotor, WHEEL_RADIUS, WHEEL_RADIUS, TRACK);
 		        }
 		      }).start();
+		  
 
+		  do {
+		      // clear the display
+		      t.clear();
+
+		      // ask the user whether the motors should drive in a square or float
+		      t.drawString("                ", 0, 0);
+		      t.drawString("  PRESS ENTER   ", 0, 1);
+		      t.drawString("   TO BEGIN     ", 0, 2);
+		      t.drawString("                ", 0, 3);
+		      t.drawString("                ", 0, 4);
+
+		      buttonChoice = Button.waitForAnyPress();
+		    } while (buttonChoice != Button.ID_ENTER);
+
+		  
+	      if(buttonChoice == Button.ID_ENTER){
+
+	    	  odometer.start();
+	          odometryDisplay.start();
+	      }
+	      
+	      
+	      
 		  while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		  System.exit(0);
 		  
