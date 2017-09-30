@@ -47,13 +47,15 @@ public class NavigationLab {
 		  OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 		  
 		  
-		  @SuppressWarnings("resource")
-		  SensorModes usSensor = new EV3UltrasonicSensor(usPort);
-		  SampleProvider usDistance = usSensor.getMode("Distance"); 
-		  float[] usData = new float[usDistance.sampleSize()];
+		 // @SuppressWarnings("resource")
+		  //SensorModes usSensor = new EV3UltrasonicSensor(usPort);
+		  //SampleProvider usDistance = usSensor.getMode("Distance"); 
+		  //float[] usData = new float[usDistance.sampleSize()];
 		  
-		  UltrasonicPoller usPoller = new UltrasonicPoller(usDistance,usData);
-		  usPoller.start();
+		  //UltrasonicPoller usPoller = new UltrasonicPoller(usDistance,usData);
+		  //usPoller.start();
+		  
+		  final Navigation navigator = new Navigation(odometer, leftMotor, rightMotor,WHEEL_RADIUS, WHEEL_RADIUS, TRACK );
 		  
 		  
 		  (new Thread() {
@@ -79,9 +81,12 @@ public class NavigationLab {
 
 		  
 	      if(buttonChoice == Button.ID_ENTER){
-
 	    	  odometer.start();
 	          odometryDisplay.start();
+	          navigator.start();
+	      
+	    	  
+	    	  
 	      }
 	      
 	      

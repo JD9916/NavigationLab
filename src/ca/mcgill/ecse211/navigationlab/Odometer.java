@@ -24,8 +24,8 @@ public class Odometer extends Thread {
   public Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
     this.leftMotor = leftMotor;
     this.rightMotor = rightMotor;
-    this.x = -15.24;         //As the origin is set to be the one shown
-    this.y = -15.24;         //in the lab instructions
+    this.x = 0;         //As the origin is set to be the one shown
+    this.y = 0;         //in the lab instructions
     this.theta = 0.0;
     this.leftMotorTachoCount = 0;
     this.rightMotorTachoCount = 0;
