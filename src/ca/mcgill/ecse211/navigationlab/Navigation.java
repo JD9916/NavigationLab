@@ -2,6 +2,7 @@ package ca.mcgill.ecse211.navigationlab;
 
 import lejos.robotics.SampleProvider;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.Sound;
 
 public class Navigation extends Thread{
 	
@@ -15,11 +16,13 @@ public class Navigation extends Thread{
 	
 	private static final int FORWARD_SPEED = 100;
 	private static final int ROTATE_SPEED = 50;
+	private static final int MINIMUM_DISTANCE = 25;
+	private static final double WHEEL_RADIUS = 2.1;
 	private double toTheta;
 	private Odometer odometer;
 	private boolean navigating = false;
 	public double x, y;
-	private double points[][] = {{0.0,60.48},{30.48,30.48},{60.96, 60.96},{60.96, 30.48},{30.48, 0.0}};;
+	private double points[][] = {{30.48,30.48},{0,60.96},{60.96, 60.96},{60.96, 30.48},{30.48, 0.0}};;
 	
 	public Navigation(Odometer odo, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, double leftRadius, double rightRadius, double width) {
 	    this.odometer = odo;
@@ -41,6 +44,7 @@ public class Navigation extends Thread{
 			x = p[0];
 			y = p[1];
 			this.travelTo(p[0], p[1]);
+			
 		}
 		
 	leftMotor.stop();
@@ -67,12 +71,106 @@ public class Navigation extends Thread{
 		
 		if((this.odometer.getTheta() <= (this.getAngle(x, y) -1)) || (this.odometer.getTheta() >= (this.getAngle(x, y) + 1)) ){
 
-			
 		turnTo(toTheta);
 		
 		}
 		
 			while(this.stop(x, y) == 0){
+			
+			if(UltrasonicPoller.getDistance() < MINIMUM_DISTANCE){
+				
+				//Method#1
+				/*
+				while(1==1){
+					
+					leftMotor.rotate(convertAngle(leftRadius, width, 90), true);
+				    rightMotor.rotate(-convertAngle(rightRadius, width, 90), false);
+				    leftMotor.setSpeed(FORWARD_SPEED);
+				    rightMotor.setSpeed(FORWARD_SPEED);
+				    leftMotor.forward();
+				    rightMotor.forward();
+				    leftMotor.rotate(convertDistance(leftRadius, 30), true);
+				    rightMotor.rotate(convertDistance(rightRadius, 30), false);
+				    leftMotor.rotate(-convertAngle(leftRadius, width, 90), true);
+				    rightMotor.rotate(convertAngle(rightRadius, width, 90), false);
+				    toTheta = this.getAngle(x, y) - odometer.getTheta();
+					
+					if(toTheta > 180){
+						toTheta -= 360.0;
+					}else if(toTheta < -180){
+						toTheta += 360.0;
+					}
+					
+					if((this.odometer.getTheta() <= (this.getAngle(x, y) -1)) || (this.odometer.getTheta() >= (this.getAngle(x, y) + 1)) ){
+
+					turnTo(toTheta);
+					
+					}
+				    
+
+					break;
+				}*/
+				double beforeTheta;
+				double afterTheta;
+				double deltaTheta;
+				double correction;
+				double distanceFromWall;
+				
+				distanceFromWall = UltrasonicPoller.getDistance();
+				
+				while (1==1){
+				
+				beforeTheta = odometer.getTheta();
+				
+				while(UltrasonicPoller.getDistance() < 40){
+					leftMotor.rotate(convertAngle(leftRadius, width, 5), true);
+				    rightMotor.rotate(-convertAngle(rightRadius, width, 5), false);
+				}
+				leftMotor.rotate(convertAngle(leftRadius, width, 10), true);
+			    rightMotor.rotate(-convertAngle(rightRadius, width, 10), false);
+			    
+			    afterTheta = odometer.getTheta();
+			    
+			    deltaTheta = Math.abs(beforeTheta-afterTheta);
+				
+			    correction = distanceFromWall/Math.cos(deltaTheta*((Math.PI)/(180)));
+			    
+			    leftMotor.rotate(convertDistance(leftRadius, correction), true);
+			    rightMotor.rotate(convertDistance(rightRadius, correction), false);
+			    
+			    leftMotor.rotate(convertDistance(leftRadius, 8), true);
+			    rightMotor.rotate(convertDistance(rightRadius, 8), false);
+			    
+			    
+			    leftMotor.rotate(-convertAngle(leftRadius, width, 180-2*deltaTheta), true);
+			    rightMotor.rotate(convertAngle(rightRadius, width, 180-2*deltaTheta), false);
+			    
+			    
+			    leftMotor.rotate(convertDistance(leftRadius, correction), true);
+			    rightMotor.rotate(convertDistance(rightRadius, correction), false);
+			    
+			    toTheta = this.getAngle(x, y) - odometer.getTheta();
+				
+				if(toTheta > 180){
+					toTheta -= 360.0;
+				}else if(toTheta < -180){
+					toTheta += 360.0;
+				}
+				
+				if((this.odometer.getTheta() <= (this.getAngle(x, y) -1)) || (this.odometer.getTheta() >= (this.getAngle(x, y) + 1)) ){
+
+				turnTo(toTheta);
+				
+				}
+				
+				break;
+				
+				
+				}
+				
+				
+				
+			}
 		
 		leftMotor.setSpeed(FORWARD_SPEED);
 	    rightMotor.setSpeed(FORWARD_SPEED);
@@ -82,6 +180,8 @@ public class Navigation extends Thread{
 	    
 		}
 		 
+			
+			Sound.beep();      //Make a beeping sound
 		
 	}
 	

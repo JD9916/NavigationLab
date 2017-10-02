@@ -26,7 +26,7 @@ public class Avoid extends Thread{
 	
 	@Override
 	public void run(){
-	      System.out.println(UltrasonicPoller.getDistance());
+	      
 			
 	      if(UltrasonicPoller.getDistance() < MINIMUM_DISTANCE){
 				leftMotor.stop();

@@ -32,7 +32,7 @@ public class OdometryDisplay extends Thread {
       t.drawString("X:              ", 0, 0);
       t.drawString("Y:              ", 0, 1);
       t.drawString("T:              ", 0, 2);
-
+      
       // get the odometry information
       odometer.getPosition(position, new boolean[] {true, true, true});
 
@@ -40,7 +40,7 @@ public class OdometryDisplay extends Thread {
       for (int i = 0; i < 3; i++) {
         t.drawString(formattedDoubleToString(position[i], 2), 3, i);
       }
-
+      System.out.println("         US: " + UltrasonicPoller.getDistance());
       // throttle the OdometryDisplay
       displayEnd = System.currentTimeMillis();
       if (displayEnd - displayStart < DISPLAY_PERIOD) {
