@@ -34,29 +34,29 @@ public class NavigationLab {
 		  
 		  int buttonChoice = 0;
 		  
-		  @SuppressWarnings("resource")
+		  /*@SuppressWarnings("resource")
 		  EV3ColorSensor csSensor = new EV3ColorSensor(csPort);
 		  SampleProvider csColor = csSensor.getMode("Red");
 		  float[] csData = new float[csColor.sampleSize()];
 		  
 		  ColorSensorPoller csPoller = new ColorSensorPoller(csColor,csData);
-		  csPoller.start();
+		  csPoller.start();*/
 		  
 		  final TextLCD t = LocalEV3.get().getTextLCD();
 		  Odometer odometer = new Odometer(leftMotor, rightMotor);
 		  OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 		  
 		  
-		 // @SuppressWarnings("resource")
-		  //SensorModes usSensor = new EV3UltrasonicSensor(usPort);
-		  //SampleProvider usDistance = usSensor.getMode("Distance"); 
-		  //float[] usData = new float[usDistance.sampleSize()];
+		  @SuppressWarnings("resource")
+		  SensorModes usSensor = new EV3UltrasonicSensor(usPort);
+		  SampleProvider usDistance = usSensor.getMode("Distance"); 
+		  float[] usData = new float[usDistance.sampleSize()];
 		  
-		  //UltrasonicPoller usPoller = new UltrasonicPoller(usDistance,usData);
-		  //usPoller.start();
+		  UltrasonicPoller usPoller = new UltrasonicPoller(usDistance,usData);
+		  usPoller.start();
 		  
 		  final Navigation navigator = new Navigation(odometer, leftMotor, rightMotor,WHEEL_RADIUS, WHEEL_RADIUS, TRACK );
-		  
+		  Avoid avoider = new Avoid(odometer, navigator, leftMotor, rightMotor);
 		  
 		  (new Thread() {
 		        public void run() {
@@ -69,7 +69,7 @@ public class NavigationLab {
 		      // clear the display
 		      t.clear();
 
-		      // ask the user whether the motors should drive in a square or float
+		      
 		      t.drawString("                ", 0, 0);
 		      t.drawString("  PRESS ENTER   ", 0, 1);
 		      t.drawString("   TO BEGIN     ", 0, 2);
@@ -81,11 +81,10 @@ public class NavigationLab {
 
 		  
 	      if(buttonChoice == Button.ID_ENTER){
+	          avoider.start();
 	    	  odometer.start();
 	          odometryDisplay.start();
 	          navigator.start();
-	      
-	    	  
 	    	  
 	      }
 	      
