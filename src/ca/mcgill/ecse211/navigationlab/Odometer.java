@@ -38,7 +38,6 @@ public class Odometer extends Thread {
 
     while (true) {
       updateStart = System.currentTimeMillis();
-      // TODO put (some of) your odometer code here
       
       double DistL = 0;           //Distance covered by the left wheel
       double DistR = 0;			  //Distance covered by the right wheel
@@ -47,8 +46,8 @@ public class Odometer extends Thread {
       double dX = 0;			  //Change in X
       double dY = 0;			  //Change in Y
 
-      nextLeftMotorTachoCount = leftMotor.getTachoCount();
-      nextRightMotorTachoCount= rightMotor.getTachoCount();
+      nextLeftMotorTachoCount = leftMotor.getTachoCount();		//Revolutions in left motor
+      nextRightMotorTachoCount= rightMotor.getTachoCount();		//Revolutions in right motor
       
       DistL = WHEEL_RADIUS*Math.PI*(nextLeftMotorTachoCount - leftMotorTachoCount)/180;     //Calculating the distance covered by the left wheel
       DistR = WHEEL_RADIUS*Math.PI*(nextRightMotorTachoCount - rightMotorTachoCount)/180;   //Calculating the distance covered by the right wheel
@@ -62,20 +61,11 @@ public class Odometer extends Thread {
       
       
 
-      synchronized (lock) {
-
-    	 /**
-         * Don't use the variables x, y, or theta anywhere but here! Only update the values of x, y,
-         * and theta in this block. Do not perform complex math
-         * 
-         */
-        // TODO replace example value
-        
+      synchronized (lock) {        
     	  
     	//The calculations are performed with theta in radians (values are converted from degrees to radians by multiplying with pi/180). The results are all displayed in degrees (Radians are converted to degrees by multiplying them by 180/pi).
     	this.setTheta(((this.getTheta()*(Math.PI/180)) + deltaT)*(180/Math.PI));
     	if((this.getTheta()*(Math.PI/180)) >= 2*Math.PI){     //If the angle exceeds 360 degrees (2pi), reset it to 0 degrees
-    		
     		this.setTheta(((this.getTheta()*(Math.PI/180)) - 2*Math.PI)*(180/Math.PI)) ;
     	}
         
@@ -108,6 +98,8 @@ public class Odometer extends Thread {
     }
   }
 
+  //Given below are the getters and setters for various variables
+  
   public void getPosition(double[] position, boolean[] update) {
     // ensure that the values don't change while the odometer is running
     synchronized (lock) {
